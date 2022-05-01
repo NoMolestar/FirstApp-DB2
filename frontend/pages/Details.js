@@ -10,7 +10,7 @@ const Details = ({navigation, route}) => {
 
     const handleClick = () => {
       navigation.navigate("home");
-  }
+    }
 
     const getProduct = () => {
         return fetch(`http://localhost:5000/select/${route.params.id}`)

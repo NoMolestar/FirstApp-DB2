@@ -94,8 +94,9 @@ def request_loader(request):
 
 @app.route("/login", methods=["POST"])
 def login():
-    email = flask.request.form["email"]
-    password = flask.request.form["pass"]
+    body = request.get_json()
+    email = body["email"]
+    password = body["password"]
 
     try:
         connection = get_db()
@@ -110,8 +111,8 @@ def login():
             usuario.id = email
             usuario.role = user[2]
             flask_login.login_user(usuario)
-            return jsonify({"success": "Login exitoso", "role": user[2]})
-        return "CREDENCIALES INVÁLIDAS", 200
+            return jsonify({"message": "Login exitoso", "role": user[2]}), 200
+        return jsonify({"message": "Credenciales inválidas", "role": user[2]}), 201
 
     except Exception as e:
         print(e)
@@ -120,8 +121,9 @@ def login():
 
 @app.route("/register", methods=["POST"])
 def register():
-    email = flask.request.form["email"]
-    password = flask.request.form["password"]
+    body = request.get_json()
+    email = body["email"]
+    password = body["password"]
     try:
         connection = get_db()
         emailExists = connection.execute(
@@ -129,7 +131,7 @@ def register():
         )
 
         if emailExists.first() is not None:
-            return "EMAIL YA EXISTE", 401
+            return jsonify({"message": "Email ya existe"}), 201
 
         connection.execute(
             "INSERT INTO USERS (email, password, role) VALUES ('"
@@ -139,7 +141,7 @@ def register():
             + "', 0)"
         )
 
-        return "USUARIO REGISTRADO", 200
+        return jsonify({"message": "Usuario registrado"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

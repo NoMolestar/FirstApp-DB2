@@ -214,6 +214,44 @@ def selectID(valor):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/edit/<int:valor>", methods=["PUT"])
+@cross_origin()
+@flask_login.login_required
+def editID(valor):
+    try:
+        body = request.get_json()
+        engine = sqlalchemy.create_engine(
+            "ibm_db_sa://db2inst1:hola@localhost:50000/testdb"
+        )
+        conn = engine.connect()
+        result = conn.execute(
+            "UPDATE products SET name = '"
+            + body["name"]
+            + "', price = "
+            + str(body["price"])
+            + " WHERE id = "
+            + str(escape(valor))
+        )
+        return jsonify({"message": "Producto actualizado"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/delete/<int:valor>", methods=["DELETE"])
+@cross_origin()
+@flask_login.login_required
+def deleteID(valor):
+    try:
+        engine = sqlalchemy.create_engine(
+            "ibm_db_sa://db2inst1:hola@localhost:50000/testdb"
+        )
+        conn = engine.connect()
+        result = conn.execute("DELETE FROM products WHERE id = " + str(escape(valor)))
+        return jsonify({"message": "Producto eliminado"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # podemos tener todas las rutas
 
 

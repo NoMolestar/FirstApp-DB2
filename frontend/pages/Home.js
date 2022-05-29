@@ -32,12 +32,63 @@ const Home = ({ navigation }) => {
     getDataFromAPI();
   }, [isFocused]);
 
+  const onUpdate = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/item", {
+        id: item.id,
+      });
+      if (response.status === 200) {
+        navigation.navigate("Info");
+      } else {
+        setError(response.data.message);
+      }
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
+  const onDelete = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/delete", {
+        id,
+      });
+      if (response.status === 200) {
+        getDataFromAPI();
+      } else {
+        setError(response.data.message);
+      }
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
+  const deletion = () =>
+  Alert.alert(
+    "Deletion",
+    "Are you sure you want to delete this item?",
+    [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      { text: "OK", onPress: () => onDelete }
+    ]
+  );
+
   return (
     <View>
       <FlatList
         data={data}
         renderItem={({ item }) => (
-          <Product id={item.id} name={item.name} nav={navigation} />
+          <View style={{
+            flexDirection: "row",
+            margin: 20
+          }}>
+            <Product id={item.id} name={item.name} nav={navigation} />
+            <Button onPress={onUpdate} title="Update"/>
+            <Button onPress={deletion} title="Delete"/>
+          </View>
         )}
       />
       <Button onPress={logout} title="Logout" />

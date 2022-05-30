@@ -35,7 +35,7 @@ const Home = ({ navigation }) => {
   const onUpdate = async () => {
     try {
       const response = await axios.post("http://localhost:5000/item", {
-        id: item.id,
+        id,
       });
       if (response.status === 200) {
         navigation.navigate("Info");

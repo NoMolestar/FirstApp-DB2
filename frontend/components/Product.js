@@ -8,6 +8,10 @@ const Product = (props) => {
         props.nav.navigate("details", {id: props.id});
     }
 
+    const onUpdate = () => {
+        props.nav.navigate("info", {id: props.id});
+    };
+
     return (
         <View style={styles.productContainer} onPress={handleClick}>
             <TouchableHighlight 
@@ -17,6 +21,7 @@ const Product = (props) => {
             >
                 <Text style={styles.item}>{props.id}: {props.name}</Text>
             </TouchableHighlight>
+            <Button onPress={onUpdate} title="Update"/>
         </View>
     );
 }

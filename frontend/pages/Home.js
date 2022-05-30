@@ -32,24 +32,9 @@ const Home = ({ navigation }) => {
     getDataFromAPI();
   }, [isFocused]);
 
-  const onUpdate = async () => {
-    try {
-      const response = await axios.post("http://localhost:5000/item", {
-        id,
-      });
-      if (response.status === 200) {
-        navigation.navigate("Info");
-      } else {
-        setError(response.data.message);
-      }
-    } catch (error) {
-      console.log("error: ", error);
-    }
-  };
-
   const onDelete = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/delete", {
+      const response = await axios.delete("http://localhost:5000/delete", {
         id,
       });
       if (response.status === 200) {
@@ -86,8 +71,7 @@ const Home = ({ navigation }) => {
             margin: 20
           }}>
             <Product id={item.id} name={item.name} nav={navigation} />
-            <Button onPress={onUpdate} title="Update"/>
-            <Button onPress={deletion} title="Delete"/>
+            <Button onPress={deletion} color={"red"}  title="Delete"/>
           </View>
         )}
       />

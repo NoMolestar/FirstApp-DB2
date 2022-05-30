@@ -6,8 +6,11 @@ import axios from "axios";
 import GlobalContext from "../utils/GlobalContext";
 import { TextInput } from "react-native-gesture-handler";
 
-const Details = ({ navigation, route }) => {
+const Info = ({ navigation, route }) => {
   const { state } = useContext(GlobalContext);
+  const [id, onChangeid] = useState("");
+  const [name, onChangename] = useState("");
+  const [price, onChangeprice] = useState("");
   const [product, setProduct] = useState({});
   const isFocused = useIsFocused();
 
@@ -46,10 +49,10 @@ const Details = ({ navigation, route }) => {
 
   const onUpdate = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/update", {
-        id: product.id,
-        name: product.name,
-        price: product.price,
+      const response = await axios.put("http://localhost:5000/edit", {
+        id,
+        name,
+        price,
       });
       if (response.status === 200) {
         navigation.navigate("home");
@@ -64,23 +67,20 @@ const Details = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.detailsText}> ID: </Text>
-      <TextInput style={styles.detailsText}> {product.id} </TextInput>
+      <TextInput style={styles.input} onChangeText={onChangeid} value={product.id}/>
       <Text style={styles.detailsText}> Name: </Text>
-      <TextInput style={styles.detailsText}> {product.name} </TextInput>
-      <Text style={styles.detailsText}> Precio: </Text>
-      <TextInput style={[styles.detailsText, styles.lastDetail]}>
-        {" "}
-        Price: ${product.price}{" "}
-      </TextInput>
+      <TextInput style={styles.input} onChangeText={onChangename} value={product.name}/>
+      <Text style={styles.detailsText}> Price: </Text>
+      <TextInput style={styles.input} onChangeText={onChangeprice} value={product.price}/>
       <View style={{
         flexDirection: "row",
         margin: 20
       }}>
         <Button title="Go back" color={"red"} onPress={handleClick}></Button>
-        <Button title="Go back" color={"red"} onPress={onUpdate}></Button>
+        <Button title="Update" color={"green"} onPress={onUpdate}></Button>
       </View>
     </View>
   );
 };
 
-export default Details;
+export default Info;

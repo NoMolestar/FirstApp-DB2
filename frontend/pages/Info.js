@@ -8,10 +8,9 @@ import { TextInput } from "react-native-gesture-handler";
 
 const Info = ({ navigation, route }) => {
   const { state } = useContext(GlobalContext);
-  const [id, onChangeid] = useState("");
-  const [name, onChangename] = useState("");
-  const [price, onChangeprice] = useState("");
-  const [product, setProduct] = useState({});
+  const [id, setId] = useState("");
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
   const isFocused = useIsFocused();
 
   const handleClick = () => {
@@ -27,7 +26,10 @@ const Info = ({ navigation, route }) => {
         },
       }
     );
-    setProduct(response.data);
+    const { id, name, price } = response.data;
+    setId(id);
+    setName(name);
+    setPrice(price);
     return response.data;
     return fetch(`http://localhost:5000/select/${route.params.id}`)
       .then((response) => response.json())
@@ -49,11 +51,18 @@ const Info = ({ navigation, route }) => {
 
   const onUpdate = async () => {
     try {
-      const response = await axios.put("http://localhost:5000/edit", {
-        id,
-        name,
-        price,
-      });
+      const response = await axios.put(
+        `http://localhost:5000/edit/${id}`,
+        {
+          name,
+          price,
+        },
+        {
+          headers: {
+            Authorization: `${state.email}:${state.password}`,
+          },
+        }
+      );
       if (response.status === 200) {
         navigation.navigate("home");
       } else {
@@ -66,16 +75,17 @@ const Info = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.detailsText}> ID: </Text>
-      <TextInput style={styles.input} onChangeText={onChangeid} value={product.id}/>
+      <Text style={styles.detailsText}> ID: {id} </Text>
       <Text style={styles.detailsText}> Name: </Text>
-      <TextInput style={styles.input} onChangeText={onChangename} value={product.name}/>
+      <TextInput style={styles.input} onChangeText={setName} value={name} />
       <Text style={styles.detailsText}> Price: </Text>
-      <TextInput style={styles.input} onChangeText={onChangeprice} value={product.price}/>
-      <View style={{
-        flexDirection: "row",
-        margin: 20
-      }}>
+      <TextInput style={styles.input} onChangeText={setPrice} value={price} />
+      <View
+        style={{
+          flexDirection: "row",
+          margin: 20,
+        }}
+      >
         <Button title="Go back" color={"red"} onPress={handleClick}></Button>
         <Button title="Update" color={"green"} onPress={onUpdate}></Button>
       </View>

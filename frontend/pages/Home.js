@@ -1,6 +1,6 @@
 import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useState, useContext } from "react";
-import { FlatList, View, Button } from "react-native";
+import { FlatList, View, Button, Alert } from "react-native";
 import Product from "../components/Product";
 import axios from "axios";
 import GlobalContext from "../utils/GlobalContext";
@@ -32,7 +32,7 @@ const Home = ({ navigation }) => {
     getDataFromAPI();
   }, [isFocused]);
 
-  const onDelete = async () => {
+  const onDelete = async (id) => {
     try {
       const response = await axios.delete("http://localhost:5000/delete", {
         id,
@@ -47,31 +47,42 @@ const Home = ({ navigation }) => {
     }
   };
 
-  const deletion = () =>
-  Alert.alert(
-    "Deletion",
-    "Are you sure you want to delete this item?",
-    [
+  const deletion = (id) =>
+    // Alert.alert("Deletion", "Are you sure you want to delete this item?", [
+    //   {
+    //     text: "Cancel",
+    //     onPress: () => console.log("Cancel Pressed"),
+    //     style: "cancel",
+    //   },
+    //   { text: "OK", onPress: () => onDelete(id) },
+    // ]);
+
+    Alert.alert("Alert Title", "My Alert Msg", [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
-        style: "cancel"
+        style: "cancel",
       },
-      { text: "OK", onPress: () => onDelete }
-    ]
-  );
+      { text: "OK", onPress: () => console.log("OK Pressed", id) },
+    ]);
 
   return (
     <View>
       <FlatList
         data={data}
         renderItem={({ item }) => (
-          <View style={{
-            flexDirection: "row",
-            margin: 20
-          }}>
+          <View
+            style={{
+              flexDirection: "row",
+              margin: 20,
+            }}
+          >
             <Product id={item.id} name={item.name} nav={navigation} />
-            <Button onPress={deletion} color={"red"}  title="Delete"/>
+            <Button
+              onPress={() => deletion(item.id)}
+              color={"red"}
+              title="Delete"
+            />
           </View>
         )}
       />

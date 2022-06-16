@@ -34,9 +34,14 @@ const Home = ({ navigation }) => {
 
   const onDelete = async (id) => {
     try {
-      const response = await axios.delete("http://localhost:5000/delete", {
-        id,
-      });
+      const response = await axios.delete(
+        `http://localhost:5000/delete/${id}`,
+        {
+          headers: {
+            Authorization: `${state.email}:${state.password}`,
+          },
+        }
+      );
       if (response.status === 200) {
         getDataFromAPI();
       } else {
@@ -47,24 +52,31 @@ const Home = ({ navigation }) => {
     }
   };
 
-  const deletion = (id) =>
-    // Alert.alert("Deletion", "Are you sure you want to delete this item?", [
-    //   {
-    //     text: "Cancel",
-    //     onPress: () => console.log("Cancel Pressed"),
-    //     style: "cancel",
-    //   },
-    //   { text: "OK", onPress: () => onDelete(id) },
-    // ]);
+  const alertWindow = (id) => {
+    var result = confirm("Are you sure you want to delete this item?");
+    if (result == true) {
+      console.log("OK was pressed.");
+      onDelete(id);
+    } else {
+      console.log("Cancel was pressed.");
+    }
+  };
 
-    Alert.alert("Alert Title", "My Alert Msg", [
-      {
-        text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel",
-      },
-      { text: "OK", onPress: () => console.log("OK Pressed", id) },
-    ]);
+  const deletion = (id) => {
+    alertWindow(id);
+    return Alert.alert(
+      "Deletion",
+      "Are you sure you want to delete this item?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => onDelete(id) },
+      ]
+    );
+  };
 
   return (
     <View>
